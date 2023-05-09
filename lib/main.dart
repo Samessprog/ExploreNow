@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:photo_view/photo_view.dart';
+import 'package:flutter/services.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,11 +33,44 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Future<List<dynamic>> getData() async {
-    var url = Uri.parse('https://fluttermysqlsames.000webhostapp.com/getData.php');
-    http.Response response = await http.get(url);
-    var data = jsonDecode(response.body);
-    return data;
+  late List<dynamic> _data;
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  Future<void> getData() async {
+    final url = Uri.parse('https://fluttermysqlsames.000webhostapp.com/getData.php');
+    final response = await http.get(url);
+    setState(() {
+      _data = jsonDecode(response.body);
+
+    });
+  }
+
+  void _showImage(BuildContext context, String imageUrl) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Scaffold(
+          appBar: AppBar(),
+          body: Center(
+            child: GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Image.network(
+                imageUrl,
+                fit: BoxFit.contain,
+                height: MediaQuery.of(context).size.height,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -45,30 +80,88 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
         centerTitle: true,
       ),
-      body: FutureBuilder<List<dynamic>>(
-        future: getData(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(snapshot.data![index]['name']),
-                  subtitle: Text(snapshot.data![index]['opis']),
-                  trailing: Text(snapshot.data![index]['ocena']),
-                );
-              },
-            );
-          } else if (snapshot.hasError) {
-            return const Center(
-              child: Text('Error'),
-            );
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
+      body: _data == null
+
+          ? const Center(
+        child: CircularProgressIndicator(),
+      )
+          : SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+
+        child: DataTable(
+
+          columns: [
+            DataColumn(label: const Text('Nazwa')),
+            DataColumn(label: const Text('Opis')),
+            DataColumn(label: const Text('Zdjęcie')),
+            DataColumn(label: const Text('Ocena')),
+            DataColumn(label: const Text('Link')),
+          ],
+          rows: List<DataRow>.generate(
+
+            _data.length,
+                (index) => DataRow(
+              cells: [
+
+                DataCell(Text(_data[index]['name'])),
+                DataCell(
+                  LimitedBox(
+                    maxHeight: 50,
+                    maxWidth: 50,
+                    child: Text('Zobacz opis'),
+                  ),
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Opis'),
+                          content: Text(_data[index]['opis']),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                ),
+                DataCell(
+                  GestureDetector(
+                    onTap: () {
+                      _showImage(context, _data[index]['img']);
+                    },
+                    child: SizedBox(
+                      width: 50,
+                      height: 50,
+                      child: Image.network(_data[index]['img']),
+                    ),
+                  ),
+                ),
+                DataCell(
+                  Row(
+                    children: [
+                      Text(_data[index]['ocena']),
+                      Icon(Icons.star, color: Colors.yellow),
+                    ],
+                  ),
+                ),
+                DataCell(
+                  ElevatedButton(
+                    onPressed: () {
+                      Clipboard.setData(ClipboardData(text: _data[index]['Googlge_link']));
+                    },
+                    child: const Text('Link'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
