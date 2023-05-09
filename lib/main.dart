@@ -35,6 +35,9 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   late List<dynamic> _data;
 
+  bool _sortAscending = true;
+  int _sortColumnIndex = 0;
+
   @override
   void initState() {
     super.initState();
@@ -46,7 +49,6 @@ class _MyHomePageState extends State<MyHomePage> {
     final response = await http.get(url);
     setState(() {
       _data = jsonDecode(response.body);
-
     });
   }
 
@@ -81,54 +83,76 @@ class _MyHomePageState extends State<MyHomePage> {
         centerTitle: true,
       ),
       body: _data == null
-
           ? const Center(
         child: CircularProgressIndicator(),
       )
           : SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-
         child: DataTable(
-
+          sortColumnIndex: _sortColumnIndex,
+          sortAscending: _sortAscending,
           columns: [
-            DataColumn(label: const Text('Nazwa')),
-            DataColumn(label: const Text('Opis')),
-            DataColumn(label: const Text('Zdjęcie')),
-            DataColumn(label: const Text('Ocena')),
-            DataColumn(label: const Text('Link')),
+            DataColumn(
+              label: Text('Nazwa'),
+              onSort: (columnIndex, ascending) {
+                setState(() {
+                  _sortColumnIndex = columnIndex;
+                  _sortAscending = ascending;
+                  _data.sort((a, b) => a['name'].compareTo(b['name']));
+                  if (!_sortAscending) {
+                    _data = _data.reversed.toList();
+                  }
+                });
+              },
+            ),
+            DataColumn(label: Text('Opis')),
+            DataColumn(label: Text('Zdjęcie')),
+            DataColumn(
+              label: Text('Ocena'),
+              onSort: (columnIndex, ascending) {
+                setState(() {
+                  _sortColumnIndex = columnIndex;
+                  _sortAscending = ascending;
+                  _data.sort(
+                        (a, b) => double.parse(a['ocena']).compareTo(double.parse(b['ocena'])),
+                  );
+                  if (!_sortAscending) {
+                    _data = _data.reversed.toList();
+                  }
+                });
+              },
+            ),
+            DataColumn(label: Text('Link')),
           ],
           rows: List<DataRow>.generate(
-
             _data.length,
                 (index) => DataRow(
               cells: [
-
                 DataCell(Text(_data[index]['name'])),
                 DataCell(
-                  LimitedBox(
-                    maxHeight: 50,
-                    maxWidth: 50,
-                    child: Text('Zobacz opis'),
+                  ElevatedButton(
+
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Opis'),
+                            content: Text(_data[index]['opis']),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    child: const Text('Zobacz opis'),
                   ),
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('Opis'),
-                          content: Text(_data[index]['opis']),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
                 ),
                 DataCell(
                   GestureDetector(
@@ -144,7 +168,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 DataCell(
                   Row(
-
                     children: [
                       Text(_data[index]['ocena']),
                       Icon(Icons.star, color: Colors.yellow),
@@ -156,7 +179,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     onPressed: () {
                       Clipboard.setData(ClipboardData(text: _data[index]['Googlge_link']));
                     },
-                    child: const Text('Link'),
+                    child: Text('Link'),
                   ),
                 ),
               ],
@@ -166,4 +189,5 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+
 }
