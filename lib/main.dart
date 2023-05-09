@@ -144,6 +144,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 DataCell(
                   Row(
+
                     children: [
                       Text(_data[index]['ocena']),
                       Icon(Icons.star, color: Colors.yellow),
