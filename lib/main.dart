@@ -129,7 +129,13 @@ class _MyHomePageState extends State<MyHomePage> {
             _data.length,
                 (index) => DataRow(
               cells: [
-                DataCell(Text(_data[index]['name'])),
+                DataCell(
+                  Text(
+                    _data[index]['name'],
+                    style: TextStyle(fontSize: 17),
+                  ),
+                ),
+
                 DataCell(
                   ElevatedButton(
 
@@ -156,21 +162,23 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
                 DataCell(
-                  GestureDetector(
-                    onTap: () {
+                  ElevatedButton(
+                    onPressed: () {
                       _showImage(context, _data[index]['img']);
                     },
-                    child: SizedBox(
-                      width: 50,
-                      height: 50,
-                      child: Image.network(_data[index]['img']),
+                    child: Text('Pokaż zdjęcie'),
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.orange,
                     ),
                   ),
                 ),
                 DataCell(
                   Row(
                     children: [
-                      Text(_data[index]['ocena']),
+                      Text(
+                        _data[index]['ocena'],
+                        style: TextStyle(fontSize: 17),
+                      ),
                       Icon(Icons.star, color: Colors.yellow),
                     ],
                   ),
