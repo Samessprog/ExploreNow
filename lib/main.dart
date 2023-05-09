@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:photo_view/photo_view.dart';
 import 'package:flutter/services.dart';
+import 'package:location/location.dart';
+
 
 void main() {
   runApp(const MyApp());
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -76,6 +76,21 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+
+  void _getCurrentLocation() async {
+    LocationData? locationData;
+    var location = Location();
+    try {
+      locationData = await location.getLocation();
+    } catch (e) {
+      print('Could not get location: $e');
+    }
+    if (locationData != null) {
+      print('Latitude: ${locationData.latitude}');
+      print('Longitude: ${locationData.longitude}');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -138,7 +153,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
                 DataCell(
                   ElevatedButton(
-
                     onPressed: () {
                       showDialog(
                         context: context,
@@ -196,7 +210,12 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _getCurrentLocation,
+        child: Text('hello'),
+      ),
     );
   }
+
 
 }
