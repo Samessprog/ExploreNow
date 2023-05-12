@@ -121,6 +121,19 @@ class _MyHomePageState extends State<MyHomePage> {
                 });
               },
             ),
+            DataColumn(
+              label: Text('Miasto'),
+              onSort: (columnIndex, ascending) {
+                setState(() {
+                  _sortColumnIndex = columnIndex;
+                  _sortAscending = ascending;
+                  _data.sort((a, b) => a['Miasto'].compareTo(b['Miasto']));
+                  if (!_sortAscending) {
+                    _data = _data.reversed.toList();
+                  }
+                });
+              },
+            ),
             DataColumn(label: Text('Opis')),
             DataColumn(label: Text('Zdjęcie')),
             DataColumn(
@@ -147,6 +160,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 DataCell(
                   Text(
                     _data[index]['name'],
+                    style: TextStyle(fontSize: 17),
+                  ),
+                ),
+                DataCell(
+                  Text(
+                    _data[index]['Miasto'],
                     style: TextStyle(fontSize: 17),
                   ),
                 ),
