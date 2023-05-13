@@ -95,6 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
   int _currentPage = 0;
   final int _perPage = 10;
+  double _value = 5.0;
   Widget build(BuildContext context) {
 
     final int _totalPages = (_data.length / _perPage).ceil();
@@ -260,13 +261,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     onPressed: (_currentPage == 0)
                         ? null
                         : () {
-                      print("Current page before update: $_currentPage");
                       setState(() {
                         _currentPage--;
                         _updateDisplayedItems();
                       });
-                      print("Current page after update: $_currentPage");
-                      print("_startIndex: $_startIndex, _endIndex: $_endIndex");
                     },
                     child: const Text('Prev'),
                     style: ElevatedButton.styleFrom(
@@ -298,7 +296,40 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ],
             ),
+        SliderTheme(
+          data: SliderThemeData(
+            thumbColor: Colors.blue, // customize thumb color
+            activeTrackColor: Colors.blue, // customize active track color
+            inactiveTrackColor: Colors.grey, // customize inactive track color
+            overlayColor: Colors.blue.withAlpha(32), // customize overlay color
+            valueIndicatorColor: Colors.blue, // customize value indicator color
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Select distance (km)',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 16),
+              Slider(
+                value: _value,
+                min: 1.0,
+                max: 10.0,
+                divisions: 9, // to have 9 steps between min and max
+                label: '$_value km',
+                onChanged: (value) {
+                  setState(() {
+                    _value = value;
+                  });
+                },
+              ),
+            ],
+          ),
+        )
+
           ],
+
         ),
       ),
       floatingActionButton: Row(
@@ -317,7 +348,6 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-
     );
   }
 }
