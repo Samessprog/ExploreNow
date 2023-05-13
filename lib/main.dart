@@ -93,30 +93,22 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     }
   }
-
+  int _currentPage = 0;
+  final int _perPage = 10;
   Widget build(BuildContext context) {
-    // Define the number of items to display per page
-    final int _perPage = 10;
-    // Calculate the number of pages
-    final int _totalPages = (_data.length / _perPage).ceil();
 
-    // Define the current page and the start/end indices for the displayed items
-    int _currentPage = 0;
+    final int _totalPages = (_data.length / _perPage).ceil();
     int _startIndex = _currentPage * _perPage;
     int _endIndex = (_startIndex + _perPage < _data.length)
         ? _startIndex + _perPage
         : _data.length;
 
-    // Define a function to update the displayed items based on the current page
     void _updateDisplayedItems() {
       _startIndex = _currentPage * _perPage;
       _endIndex = (_startIndex + _perPage < _data.length)
           ? _startIndex + _perPage
           : _data.length;
     }
-
-    // Update the displayed items on initial build
-    _updateDisplayedItems();
 
     return Scaffold(
       appBar: AppBar(
@@ -255,45 +247,53 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                   ],
-
-
                 ),
               ),
             ),
-            // Add pagination buttons here
+            SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Previous page button
-                ElevatedButton(
-                  onPressed: (_currentPage == 0)
-                      ? null
-                      : () {
-                    setState(() {
-                      _currentPage--;
-                      _updateDisplayedItems();
-                    });
-                  },
-                  child: const Text('Prev'),
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.grey[300],
+                Container(
+                  margin: EdgeInsets.only(right: 10),
+                  child: ElevatedButton(
+                    onPressed: (_currentPage == 0)
+                        ? null
+                        : () {
+                      print("Current page before update: $_currentPage");
+                      setState(() {
+                        _currentPage--;
+                        _updateDisplayedItems();
+                      });
+                      print("Current page after update: $_currentPage");
+                      print("_startIndex: $_startIndex, _endIndex: $_endIndex");
+                    },
+                    child: const Text('Prev'),
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.blue,
+                    ),
                   ),
                 ),
+
                 // Current page indicator
                 Text('Page ${_currentPage + 1} of $_totalPages'),
                 // Next page button
-                ElevatedButton(
-                  onPressed: (_currentPage == _totalPages - 1)
-                      ? null
-                      : () {
-                    setState(() {
-                      _currentPage++;
-                      _updateDisplayedItems();
-                    });
-                  },
-                  child: const Text('Next'),
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.grey[300],
+                Container(
+                  margin: EdgeInsets.only(left: 10),
+
+                  child: ElevatedButton(
+                    onPressed: (_currentPage == _totalPages - 1)
+                        ? null
+                        : () {
+                      setState(() {
+                        _currentPage++;
+                        _updateDisplayedItems();
+                      });
+                    },
+                    child: const Text('Next'),
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.blue,
+                    ),
                   ),
                 ),
               ],
@@ -320,8 +320,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
     );
   }
-
-
 }
 
 
