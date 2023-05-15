@@ -296,37 +296,45 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ],
             ),
-        SliderTheme(
-          data: SliderThemeData(
-            thumbColor: Colors.blue, // customize thumb color
-            activeTrackColor: Colors.blue, // customize active track color
-            inactiveTrackColor: Colors.grey, // customize inactive track color
-            overlayColor: Colors.blue.withAlpha(32), // customize overlay color
-            valueIndicatorColor: Colors.blue, // customize value indicator color
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Select distance (km)',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            SizedBox(height: 25),
+            SliderTheme(
+              data: SliderThemeData(
+                thumbColor: Colors.blue,
+                activeTrackColor: Colors.blue,
+                inactiveTrackColor: Colors.grey,
+                overlayColor: Colors.blue.withAlpha(32),
+                valueIndicatorColor: Colors.green,
+                trackHeight: 8.0, // wysokość ścieżki
               ),
-              SizedBox(height: 16),
-              Slider(
-                value: _value,
-                min: 1.0,
-                max: 10.0,
-                divisions: 9, // to have 9 steps between min and max
-                label: '$_value km',
-                onChanged: (value) {
-                  setState(() {
-                    _value = value;
-                  });
-                },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: 23.0),
+                    child: Text(
+                      'Select distance (km)',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  SizedBox(
+                width: 350,
+                child: Slider(
+                  value: _value,
+                  min: 1.0,
+                  max: 10.0,
+                  divisions: 9,
+                  label: '$_value km',
+                  onChanged: (value) {
+                    setState(() {
+                      _value = value;
+                    });
+                  },
+                ),
               ),
-            ],
-          ),
-        )
+                ],
+              ),
+            )
+
 
           ],
 
