@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Home Page'),
+      home: const MyHomePage(title: 'ExploreNow'),
     );
   }
 }
@@ -129,7 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
               sortAscending: _sortAscending,
               columns: [
                 DataColumn(
-                  label: Text('Name of place'),
+                  label: Text('Name'),
                   onSort: (columnIndex, ascending) {
                     setState(() {
                       _sortColumnIndex = columnIndex;
