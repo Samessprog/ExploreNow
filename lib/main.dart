@@ -129,7 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
               sortAscending: _sortAscending,
               columns: [
                 DataColumn(
-                  label: Text('Nazwa'),
+                  label: Text('Name of place'),
                   onSort: (columnIndex, ascending) {
                     setState(() {
                       _sortColumnIndex = columnIndex;
@@ -142,7 +142,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
                 ),
                 DataColumn(
-                  label: Text('Miasto'),
+                  label: Text('City'),
                   onSort: (columnIndex, ascending) {
                     setState(() {
                       _sortColumnIndex = columnIndex;
@@ -154,10 +154,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     });
                   },
                 ),
-                DataColumn(label: Text('Opis')),
-                DataColumn(label: Text('Zdjęcie')),
+                DataColumn(label: Text('Description')),
+                DataColumn(label: Text('Photo')),
                 DataColumn(
-                  label: Text('Ocena'),
+                  label: Text('Rating'),
                   onSort: (columnIndex, ascending) {
                     setState(() {
                       _sortColumnIndex = columnIndex;
@@ -214,7 +214,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             },
                           );
                         },
-                        child: const Text('Zobacz opis'),
+                        child: const Text('Show description'),
                       ),
                     ),
                     DataCell(
@@ -222,7 +222,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         onPressed: () {
                           _showImage(context, _data[index]['img']);
                         },
-                        child: Text('Pokaż zdjęcie'),
+                        child: Text('Show photo'),
                         style: ElevatedButton.styleFrom(
                           primary: Colors.orange,
                         ),
@@ -334,10 +334,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ),
             )
-
-
           ],
-
         ),
       ),
       floatingActionButton: Row(
