@@ -101,6 +101,8 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Map<String, dynamic>> _filterByDistance(LatLng currentLatLng, double maxDistance) {
     List<Map<String, dynamic>> nearbyElements = [];
 
+    _data = _allData;
+
     _data.forEach((element) {
       double longitude, latitude;
       try {
