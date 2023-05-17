@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:location/location.dart';
-import 'dart:math' show cos, sqrt, asin;
+import 'package:flutter_latlong/flutter_latlong.dart';
 
 void main() {
   runApp(const MyApp());
@@ -79,21 +79,41 @@ class _MyHomePageState extends State<MyHomePage> {
   LocationData? _currentLocation;
 
   Future<void> _getCurrentLocation() async {
-    LocationData? locationData;
+    LocationData locationData;
     var location = Location();
-    try {
-      locationData = await location.getLocation();
-    } catch (e) {
-      print('Could not get location: $e');
-    }
+    locationData = await location.getLocation();
     if (locationData != null) {
       print('Latitude: ${locationData.latitude}');
       print('Longitude: ${locationData.longitude}');
+
+      LatLng currentLatLng = LatLng(locationData.latitude!, locationData.longitude!);
+
+      _data.forEach((element) {
+        double longitude, latitude;
+        try {
+          longitude = double.parse(element['Longitude']);
+          latitude = double.parse(element['Latitude']);
+        } catch (e) {
+          print('Invalid latitude or longitude value: ${element['Latitude']}, ${element['Longitude']}');
+          return;
+        }
+
+        LatLng elementLatLng = LatLng(latitude, longitude);
+
+        double distance = (Distance().as(LengthUnit.Meter, currentLatLng, elementLatLng) ?? 0).toDouble();
+
+        print('Distance to element: $distance meters');
+      });
+
+
       setState(() {
         _currentLocation = locationData;
       });
     }
   }
+
+
+
 
   int _currentPage = 0;
   final int _perPage = 10;
