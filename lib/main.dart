@@ -36,6 +36,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late List<dynamic> _data;
+  late List<dynamic> _allData;
   bool _sortAscending = true;
   int _sortColumnIndex = 0;
 
@@ -50,7 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final response = await http.get(url);
     setState(() {
       _data = jsonDecode(response.body);
-
+      _allData = _data;
     });
   }
 
@@ -83,37 +84,47 @@ class _MyHomePageState extends State<MyHomePage> {
     var location = Location();
     locationData = await location.getLocation();
     if (locationData != null) {
-      print('Latitude: ${locationData.latitude}');
-      print('Longitude: ${locationData.longitude}');
-
       LatLng currentLatLng = LatLng(locationData.latitude!, locationData.longitude!);
+      double maxDistance = 1.0; // Maksymalna odległość w kilometrach
 
-      _data.forEach((element) {
-        double longitude, latitude;
-        try {
-          longitude = double.parse(element['Longitude']);
-          latitude = double.parse(element['Latitude']);
-        } catch (e) {
-          print('Invalid latitude or longitude value: ${element['Latitude']}, ${element['Longitude']}');
-          return;
-        }
-
-        LatLng elementLatLng = LatLng(latitude, longitude);
-
-        double distance = (Distance().as(LengthUnit.Meter, currentLatLng, elementLatLng) ?? 0).toDouble();
-
-        print('Distance to element: $distance meters');
-      });
-
+      List<Map<String, dynamic>> nearbyElements = _filterByDistance(currentLatLng, maxDistance);
 
       setState(() {
         _currentLocation = locationData;
+        _data = nearbyElements; // Aktualizacja danych po filtracji
       });
     }
   }
 
+  List<Map<String, dynamic>> _filterByDistance(LatLng currentLatLng, double maxDistance) {
+    List<Map<String, dynamic>> nearbyElements = [];
 
+    _data.forEach((element) {
+      double longitude, latitude;
+      try {
+        longitude = double.parse(element['Longitude']);
+        latitude = double.parse(element['Latitude']);
+      } catch (e) {
+        print('Invalid latitude or longitude value: ${element['Latitude']}, ${element['Longitude']}');
+        return;
+      }
 
+      LatLng elementLatLng = LatLng(latitude, longitude);
+      double distance = (Distance().as(LengthUnit.Meter, currentLatLng, elementLatLng) ?? 0).toDouble();
+
+      if (distance <= maxDistance * 1000) { // Przekształcamy maxDistance na metry
+        nearbyElements.add(element);
+      }
+    });
+
+    return nearbyElements;
+  }
+
+  void _showAllElements() {
+    setState(() {
+      _data = _allData; // Przywróć oryginalne dane bez filtracji
+    });
+  }
 
   int _currentPage = 0;
   final int _perPage = 10;
@@ -361,9 +372,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           const SizedBox(width: 16),
           FloatingActionButton(
-            onPressed: () {
-              // Handle button press
-            },
+            onPressed: _showAllElements,
             child: const Text('all'),
           ),
         ],
