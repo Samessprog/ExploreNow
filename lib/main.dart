@@ -85,13 +85,13 @@ class _MyHomePageState extends State<MyHomePage> {
     locationData = await location.getLocation();
     if (locationData != null) {
       LatLng currentLatLng = LatLng(locationData.latitude!, locationData.longitude!);
-      double maxDistance = 1.0; // Maksymalna odległość w kilometrach
+      double maxDistance = _distanceValueSlider; // Pobranie wartości suwaka
 
       List<Map<String, dynamic>> nearbyElements = _filterByDistance(currentLatLng, maxDistance);
 
       setState(() {
         _currentLocation = locationData;
-        _data = nearbyElements; // Aktualizacja danych po filtracji
+        _data = nearbyElements;
       });
     }
   }
@@ -112,7 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
       LatLng elementLatLng = LatLng(latitude, longitude);
       double distance = (Distance().as(LengthUnit.Meter, currentLatLng, elementLatLng) ?? 0).toDouble();
 
-      if (distance <= maxDistance * 1000) { // Przekształcamy maxDistance na metry
+      if (distance <= maxDistance * 1000) {
         nearbyElements.add(element);
       }
     });
@@ -128,7 +128,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   int _currentPage = 0;
   final int _perPage = 10;
-  double _value = 5.0;
+  double _distanceValueSlider = 5.0;
   Widget build(BuildContext context) {
 
     final int _totalPages = (_data.length / _perPage).ceil();
@@ -338,21 +338,21 @@ class _MyHomePageState extends State<MyHomePage> {
                   Padding(
                     padding: EdgeInsets.only(left: 23.0),
                     child: Text(
-                      'Select distance (km)',
+                      'Select distance (${_distanceValueSlider.toStringAsFixed(1)} km)'  ,
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ),
                   SizedBox(
                     width: 350,
                     child: Slider(
-                      value: _value,
+                      value: _distanceValueSlider,
                       min: 1.0,
                       max: 10.0,
                       divisions: 9,
-                      label: '$_value km',
+                      label: '$_distanceValueSlider km',
                       onChanged: (value) {
                         setState(() {
-                          _value = value;
+                          _distanceValueSlider = value;
                         });
                       },
                     ),
