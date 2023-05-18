@@ -80,6 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
   LocationData? _currentLocation;
 
   Future<void> _getCurrentLocation() async {
+    _currentPage = 0;
     LocationData locationData;
     var location = Location();
     locationData = await location.getLocation();
@@ -96,21 +97,18 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-
-
   List<Map<String, dynamic>> _filterByDistance(LatLng currentLatLng, double maxDistance) {
     List<Map<String, dynamic>> nearbyElements = [];
 
-    _data = _allData;
+    double longitude, latitude;
 
-    _data.forEach((element) {
-      double longitude, latitude;
+    for (var element in _allData) {
       try {
         longitude = double.parse(element['Longitude']);
         latitude = double.parse(element['Latitude']);
       } catch (e) {
         print('Invalid latitude or longitude value: ${element['Latitude']}, ${element['Longitude']}');
-        return;
+        continue;
       }
 
       LatLng elementLatLng = LatLng(latitude, longitude);
@@ -119,10 +117,10 @@ class _MyHomePageState extends State<MyHomePage> {
       if (distance <= maxDistance * 1000) {
         nearbyElements.add(element);
       }
-    });
-
+    }
     return nearbyElements;
   }
+
 
   void _showAllElements() {
     setState(() {
