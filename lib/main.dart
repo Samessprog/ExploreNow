@@ -121,12 +121,34 @@ class _MyHomePageState extends State<MyHomePage> {
     return nearbyElements;
   }
 
-
   void _showAllElements() {
     setState(() {
       _data = _allData; // Przywróć oryginalne dane bez filtracji
     });
   }
+
+
+  void showDescriptionDialog(BuildContext context, String description) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Opis'),
+          content: Text(description),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
 
   int _currentPage = 0;
   final int _perPage = 10;
@@ -215,15 +237,23 @@ class _MyHomePageState extends State<MyHomePage> {
                     (index) => DataRow(
                   cells: [
                     DataCell(
-                      Text(
-                        _data[_startIndex + index]['name'],
-                        style: TextStyle(
-                          fontSize: 17,
+                      GestureDetector(
+                        onTap: () {
+                          showDescriptionDialog(context, _data[_startIndex + index]['opis']);
+                        },
+                        child: Text(
+                          _data[_startIndex + index]['name'],
+                          style: TextStyle(
+                            fontSize: 17,
+                          ),
                         ),
                       ),
                     ),
 
                     DataCell(
+                      onTap: () {
+                        showDescriptionDialog(context, _data[_startIndex + index]['opis']);
+                      },
                       Text(
                         _data[_startIndex + index]['Miasto'],
                         style: TextStyle(fontSize: 17),
@@ -232,23 +262,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     DataCell(
                       ElevatedButton(
                         onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: const Text('Opis'),
-                                content: Text(_data[_startIndex + index]['opis']),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text('OK'),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
+                            showDescriptionDialog(context, _data[_startIndex + index]['opis']);
                         },
                         child: const Text('Show description'),
                       ),
